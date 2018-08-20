@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  pubsub_emulator:
+    image: rahlfinger/gcloud-pubsub-emulator-docker:176.0.0-alpine
+    ports:
+      - 8085:8085
+  pubsub_demo:
+    image: ruby:2.5
+    volumes:
+      - .:/pubsub_demo
+    working_dir: /pubsub_demo
+    command: >
+      bash -c "gem install google-cloud-pubsub
+      && ruby pubsub.rb"
+    depends_on:
+      - pubsub_emulator
+    environment:
+        PUBSUB_EMULATOR_HOST: pubsub_emulator:8085
